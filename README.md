@@ -26,4 +26,4 @@ lub
 
 _./jb -gier 100000 -kredyt 500000 -plik plik.txt_
 
-![alt text](https://github.com/ato-zen/jednoreki-bandyta/blob/main/image.jpg?raw=true)
+![alt text](https://github.com/ato-zen/jednoreki-bandyta/blob/main/zrzut-ekranu.png?raw=true)
