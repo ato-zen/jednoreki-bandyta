@@ -14,12 +14,17 @@ Stosunek zwrotu jest na poziomie 95%.
 Częstotliwość trafień jest na poziomie 30%.
 
 
+
 **Kompilacja:**
+
 _gcc jb.c -o jb_
 
 **Uruchomienie:**
+
 _./jb_
+
 lub
+
 _./jb -gier 100000 -kredyt 500000 -plik plik.txt_
 
 
