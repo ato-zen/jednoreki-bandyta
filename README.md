@@ -6,7 +6,7 @@ Jednoręki bandyta - RTS 95, HF 30
 Stawka wynosi 100, kredyt 500 tysięcy
 
 
-Wszystkie losowania i zmieniającą się wartość kredytu można zapisać do pliku używając opcji _-plik_
+Wszystkie losowania i zmieniającą się wartość kredytu można zapisać do pliku używając opcji `-plik`
 
 Stosunek zwrotu jest na poziomie 95%.
 
@@ -16,14 +16,14 @@ Częstotliwość trafień wynosi 30%.
 
 **Kompilacja:**
 
-_gcc jb.c -o jb_
+`gcc jb.c -o jb`
 
 **Uruchomienie:**
 
-_./jb_
+`./jb`
 
 lub
 
-_./jb -gier 100000 -kredyt 500000 -plik plik.txt_
+`./jb -gier 100000 -kredyt 500000 -plik plik.txt`
 
 ![alt text](https://github.com/ato-zen/jednoreki-bandyta/blob/main/zrzut-ekranu.png?raw=true)
