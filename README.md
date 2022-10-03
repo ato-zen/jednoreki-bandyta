@@ -1,4 +1,4 @@
-# jednoreki-bandyta
+# Jednoręki bandyta
 Jednoręki bandyta - RTP 95, HF 30
 
 "Gra" jednoręki bandyta losuje domyślnie 100 tysięcy wierszy na pięciu bębnach spośród ośmiu cyfr.
