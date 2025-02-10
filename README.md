@@ -1,29 +1,29 @@
-# Jednoręki bandyta
-Jednoręki bandyta - RTP 95, HF 30
+# One-Armed Bandit
+One-Armed Bandit - RTP 95, HF 30
 
-"Gra" jednoręki bandyta losuje domyślnie 100 tysięcy wierszy na pięciu bębnach spośród ośmiu cyfr.
+The "One-Armed Bandit" game draws by default 100 thousand rows on five reels from eight digits.
 
-Stawka wynosi 100, kredyt 500 tysięcy
-
-
-Wszystkie losowania i zmieniającą się wartość kredytu można zapisać do pliku używając opcji `-plik`
-
-Stosunek zwrotu jest na poziomie 95%.
-
-Częstotliwość trafień wynosi 30%.
+The bet is 100, and the credit is 500 thousand.
 
 
+All draws and the changing credit value can be saved to a file using the `-file` option.
 
-**Kompilacja:**
+The return ratio is at the level of 95%.
+
+The hit frequency is 30%.
+
+
+
+**Compilation:**
 
 `gcc jb.c -o jb`
 
-**Uruchomienie:**
+**Execution:**
 
 `./jb`
 
-lub
+or
 
-`./jb -gier 100000 -kredyt 500000 -plik plik.txt`
+`./jb -games 100000 -credit 500000 -file file.txt`
 
 ![alt text](https://github.com/ato-zen/jednoreki-bandyta/blob/main/zrzut-ekranu.png?raw=true)
