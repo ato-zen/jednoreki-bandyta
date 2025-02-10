@@ -4,18 +4,18 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define DLUGOSC_NAZWY_PLIKU 222
-#define GIER "-gier"
-#define KREDYT "-kredyt"
-#define PLIK "-plik"
+#define FILE_NAME_LENGTH 222
+#define GAMES "-games"
+#define CREDIT "-credit"
+#define FILE_ARG "-file"
 
-char plik[DLUGOSC_NAZWY_PLIKU];
-bool plik_b = false;
+char file[FILE_NAME_LENGTH];
+bool file_b = false;
 
-int kredyt = 500000, gier = 100000, stawka = 100, znak[8] = {0,1,2,3,4,5,6,7};
+int credit = 500000, games = 100000, bet = 100, symbol[8] = {0,1,2,3,4,5,6,7};
 
-// 5 bębnów po 40 pozycji każdy
-int beben[5][40] = {
+// 5 reels with 40 positions each
+int reel[5][40] = {
   {1,0,0,1,0,0,6,1,0,2,0,0,2,0,3,0,3,0,0,7,0,2,0,4,0,3,0,3,0,1,0,0,1,3,4,0,5,0,0,0},
   {0,2,0,0,1,0,0,1,0,3,0,7,0,0,1,0,5,0,0,4,1,0,0,5,0,0,3,6,0,2,0,4,2,0,7,0,6,2,0,0},
   {3,0,5,0,6,5,0,3,0,1,0,4,1,0,2,6,0,1,0,5,2,4,0,4,0,0,3,1,5,0,2,0,7,6,0,1,0,2,0,0},
@@ -23,8 +23,8 @@ int beben[5][40] = {
   {2,4,2,2,1,2,0,5,3,4,2,0,5,4,1,5,0,6,1,3,0,3,2,0,4,7,5,6,7,1,5,4,6,6,2,3,1,6,3,1}
 };
 
-// tabela wypłat dla każdego znaku począwszy od 0 za dwa trafienia
-int stawki[8][5] = {
+// payout table for each symbol starting from 0 for two hits
+int payouts[8][5] = {
 //    x2   x3   x4    x5
   {0, 50, 500, 1000, 2000}, //0
   {0,  0, 500, 1000, 2000}, //1
@@ -35,92 +35,91 @@ int stawki[8][5] = {
   {0,  0, 600, 3000, 6000}, //6
   {0,  0, 800, 5000, 8000}  //7
 };
-int wygrane[8][5], wiersz[5], wygrywa, trafien, razem, wygranych, rtp, hf;
+int wins[8][5], row[5], win_symbol, hits, total_bet, total_wins, rtp, hf;
 
-void graj(){
+void play(){
   FILE *fp;
 
   srand(time(NULL));
 
-  if(plik_b){
-    fp = fopen (plik, "w");
+  if(file_b){
+    fp = fopen (file, "w");
     if (fp == NULL) {
-      printf("Nie mozna utworzyć pliku\n");
+      printf("Cannot create file\n");
       return;
     }
   }
 
-  printf("Gier: %d, Stawka: %d, Kredyt: %d\n", gier, stawka, kredyt);
+  printf("Games: %d, Bet: %d, Credit: %d\n", games, bet, credit);
 
-  for (int i = 0; i < gier; i++) {
-    razem = razem + stawka;
-    kredyt = kredyt - stawka;
+  for (int i = 0; i < games; i++) {
+    total_bet = total_bet + bet;
+    credit = credit - bet;
 
-    // wylosowanie linii/wiersza wygrywającego na 5-ciu bębnach
-    for (int j = 0; j < 5; j++) wiersz[j] = znak[beben[j][rand()%40]];
+    // draw a winning line/row on 5 reels
+    for (int j = 0; j < 5; j++) row[j] = symbol[reel[j][rand()%40]];
 
-    // wygrywa zawsze pierwszy
-    wygrywa = wiersz[0];
-    trafien=0;
+    // always the first one wins
+    win_symbol = row[0];
+    hits = 0;
 
-    // zliczenie ile razy ten pierwszy się powtórzy
-    for (int j=1; j < 5; j++) {
-      if(wiersz[j]==wygrywa) trafien++;
+    // count how many times the first one repeats
+    for (int j = 1; j < 5; j++) {
+      if(row[j] == win_symbol) hits++;
       else break;
     }
 
-    // jeżeli 0 wystąpi choć dwa razy to już jest "wygrana"
-    // pozostałe znaki muszą wystąpić co najmniej 3 razy
-    if((wygrywa==0 && trafien==1) || trafien>1) {
-      wygranych = wygranych + stawki[wygrywa][trafien];
-      kredyt = kredyt +stawki[wygrywa][trafien];
-      wygrane[wygrywa][trafien] = wygrane[wygrywa][trafien] + 1;
+    // if 0 occurs at least twice it is already a "win"
+    // other symbols must occur at least 3 times
+    if((win_symbol == 0 && hits == 1) || hits > 1) {
+      total_wins = total_wins + payouts[win_symbol][hits];
+      credit = credit + payouts[win_symbol][hits];
+      wins[win_symbol][hits] = wins[win_symbol][hits] + 1;
       hf++;
     }
 
-    if(plik_b){
-      fprintf(fp, "%d, %d, %d, %d, %d, %d, %d\n", i, wiersz[0],wiersz[1],wiersz[2],
-      wiersz[3],wiersz[4], kredyt);
+    if(file_b){
+      fprintf(fp, "%d, %d, %d, %d, %d, %d, %d\n", i, row[0], row[1], row[2], row[3], row[4], credit);
     }
   }
 
-  printf("Postawione: %d, Wygrane: %d, Bilans: %d\n", razem, wygranych, kredyt);
-  printf("Ilość wygranych:\n\t[x1]\t[x2]\t[x3]\t[x4]\t[x5]\n");
-  for (int i=0; i < 8; i++) printf("%d:\t%d,\t%d,\t%d,\t%d,\t%d\n", i,
-    wygrane[i][0], wygrane[i][1], wygrane[i][2], wygrane[i][3], wygrane[i][4]);
-  printf("RTP: %.2f\n", (100.0*wygranych/razem));
-  printf("HF: %.2f\n", (100.0*hf/gier));
+  printf("Total Bet: %d, Total Wins: %d, Balance: %d\n", total_bet, total_wins, credit);
+  printf("Number of Wins:\n\t[x1]\t[x2]\t[x3]\t[x4]\t[x5]\n");
+  for (int i = 0; i < 8; i++) printf("%d:\t%d,\t%d,\t%d,\t%d,\t%d\n", i,
+    wins[i][0], wins[i][1], wins[i][2], wins[i][3], wins[i][4]);
+  printf("RTP: %.2f\n", (100.0 * total_wins / total_bet));
+  printf("HF: %.2f\n", (100.0 * hf / games));
 
-  if(plik_b) fclose(fp);
+  if(file_b) fclose(fp);
 }
 
-int main(int argc , char **argv){
-  if((argc % 2)==1)
-  for (int i = 1; i < argc; i=i+2) {
-      if(strcmp(GIER, argv[i])==0){
-        gier = atoi(argv[i+1]);
-      } else if(strcmp(KREDYT, argv[i])==0){
-        kredyt = atoi(argv[i+1]);
-      } else if(strcmp(PLIK, argv[i])==0){
-        if((strlen(argv[i+1]))<DLUGOSC_NAZWY_PLIKU){
-          strcpy(plik, argv[i+1]);
-          plik_b = true;
+int main(int argc, char **argv){
+  if((argc % 2) == 1)
+  for (int i = 1; i < argc; i = i + 2) {
+      if(strcmp(GAMES, argv[i]) == 0){
+        games = atoi(argv[i + 1]);
+      } else if(strcmp(CREDIT, argv[i]) == 0){
+        credit = atoi(argv[i + 1]);
+      } else if(strcmp(FILE_ARG, argv[i]) == 0){
+        if((strlen(argv[i + 1])) < FILE_NAME_LENGTH){
+          strcpy(file, argv[i + 1]);
+          file_b = true;
         } else {
-          printf("Maksymalna długość nazwy pliku to %d znaków\n", DLUGOSC_NAZWY_PLIKU);
+          printf("Maximum file name length is %d characters\n", FILE_NAME_LENGTH);
         }
       } else {
-        printf("Nieznany argument: %s\n", argv[i] );
-        printf("Przykład uruchomienia:\n%s %s 100000 %s 500000 %s plik.txt\n",
-          argv[0], GIER, KREDYT, PLIK);
+        printf("Unknown argument: %s\n", argv[i] );
+        printf("Example usage:\n%s %s 100000 %s 500000 %s file.txt\n",
+          argv[0], GAMES, CREDIT, FILE_ARG);
         return 1;
       }
   } else {
-    printf("Podaj poprawną ilość argumentów\n" );
-    printf("Przykład uruchomienia:\n%s %s 100000 %s 500000 %s plik.txt\n",
-      argv[0], GIER, KREDYT, PLIK);
+    printf("Provide a correct number of arguments\n" );
+    printf("Example usage:\n%s %s 100000 %s 500000 %s file.txt\n",
+      argv[0], GAMES, CREDIT, FILE_ARG);
     return 1;
   }
 
-  graj();
+  play();
   return 0;
 }
